@@ -21,4 +21,4 @@ This project serves as a comprehensive example of using HTML Canvas for game dev
 
 This software is provided "as is". The author(s) **will not be responsible for any damages** or liabilities arising from the use, misuse, or inability to use this software. Use at your own risk.
 
-For full details, please refer to the (LICENSE) file included in this repository.
+For full details, please refer to the [LICENSE] file included in this repository.
