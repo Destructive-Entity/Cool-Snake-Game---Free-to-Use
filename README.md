@@ -15,7 +15,7 @@ A modern and significantly enhanced implementation of the classic Snake game, bu
 *   **Wrap-Around Gameplay:** The snake wraps around the screen edges instead of crashing into walls.
 *   **Clear Controls:** Supports both Arrow Keys and WASD for movement, with on-screen instructions.
 
-This project serves as a comprehensive example of using HTML Canvas for game development, combined with modern CSS and JavaScript for interactive features and state management. It's free to use and modify as long as the owner [https://github.com/Destructive-Entity] is credited.
+This project serves as a comprehensive example of using HTML Canvas for game development, combined with modern CSS and JavaScript for interactive features and state management. It's free to use and modify. While the MIT License only requires the inclusion of the copyright notice and license text, linking back to the original repository at https://github.com/Destructive-Entity/Cool-Snake-Game---Free-to-Use is greatly appreciated!
 
 ### **Disclaimer**
 
