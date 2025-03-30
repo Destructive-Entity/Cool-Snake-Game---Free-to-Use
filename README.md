@@ -1,7 +1,5 @@
 # Cool-Snake-Game---Free-to-Use
 
-# Cool-Snake-Game---Free-to-Use
-
 🎮 **[Click Here to Play the Live Demo!](https://destructive-entity.github.io/Cool-Snake-Game---Free-to-Use/)** 🎮
 
 Description:
