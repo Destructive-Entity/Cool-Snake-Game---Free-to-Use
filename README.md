@@ -17,4 +17,8 @@ A modern and significantly enhanced implementation of the classic Snake game, bu
 
 This project serves as a comprehensive example of using HTML Canvas for game development, combined with modern CSS and JavaScript for interactive features and state management. It's free to use and modify as long as the owner [https://github.com/Destructive-Entity] is credited.
 
-Disclaimer: me iwll not be responsible for any damages.
+### **Disclaimer**
+
+This software is provided "as is". The author(s) **will not be responsible for any damages** or liabilities arising from the use, misuse, or inability to use this software. Use at your own risk.
+
+For full details, please refer to the (LICENSE) file included in this repository.
