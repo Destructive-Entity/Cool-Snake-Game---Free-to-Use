@@ -1,0 +1,615 @@
+/* Modern Snake Game Styling */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap'); /* Import Poppins font */
+
+:root {
+    /* Define theme colors as variables for easier management */
+    --theme-bg-start: #1a2a6c;
+    --theme-bg-mid: #b21f1f;
+    --theme-bg-end: #fdbb2d;
+    --canvas-bg: rgba(255, 255, 255, 0.9);
+    --text-color: #fff;
+    --canvas-border-color: rgba(255, 255, 255, 0.2);
+    --overlay-bg: rgba(0, 0, 0, 0.7);
+    --button-gradient-start: #00d2ff;
+    --button-gradient-end: #3a7bd5;
+    --score-bg: rgba(0, 0, 0, 0.4);
+    --gameover-gradient-start: #ff416c;
+    --gameover-gradient-end: #ff4b2b;
+    --highlight-color: #ffcc00; /* For level, active states */
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; /* Use min-height to allow content expansion */
+    margin: 0;
+    background: linear-gradient(135deg, var(--theme-bg-start), var(--theme-bg-mid), var(--theme-bg-end));
+    background-attachment: fixed; /* Prevent gradient scrolling */
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-color);
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    transition: background 0.5s ease; /* Smooth theme transition */
+}
+
+h1 {
+    margin-bottom: 0.5em;
+    font-size: clamp(2rem, 6vw, 3.2rem); /* Responsive font size */
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(90deg, var(--button-gradient-start), var(--button-gradient-end));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: pulse 2s infinite;
+    text-align: center;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3); }
+    50% { transform: scale(1.03); text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.4); }
+    100% { transform: scale(1); text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3); }
+}
+
+#gameCanvas {
+    border: 8px solid var(--canvas-border-color);
+    border-radius: 12px;
+    background-color: var(--canvas-bg);
+    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
+    transition: all 0.3s ease;
+    /* Note: Snake, food, and grid lines are drawn via JS.
+       Their colors might need JS updates for themes/dark mode. */
+    display: block; /* Prevents potential small gaps below canvas */
+    max-width: 90vw; /* Ensure canvas fits viewport */
+    max-height: 70vh; /* Adjust as needed */
+    aspect-ratio: 1 / 1; /* Maintain square shape if width/height adjusted */
+}
+
+#gameCanvas:hover {
+    transform: translateY(-5px) scale(1.01); /* Slight scale on hover */
+    box-shadow: 0 22px 43px rgba(0, 0, 0, 0.4), 0 18px 15px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.4); /* Highlight border on hover */
+}
+
+.score-container {
+    margin: 1.2rem 0;
+    font-size: clamp(1.2rem, 4vw, 1.8rem); /* Responsive font size */
+    font-weight: 600;
+    color: var(--text-color);
+    background: var(--score-bg);
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center content */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-width: 150px; /* Ensure minimum width */
+    text-align: center; /* Ensure text is centered */
+}
+
+.score-container::before {
+    content: '🍎'; /* Using emoji as icon */
+    margin-right: 10px;
+    font-size: 1.5rem;
+    display: inline-block; /* Ensure proper alignment */
+}
+
+.game-over-message {
+    position: relative;
+    margin-top: 2rem;
+    padding: 1.5rem 3rem;
+    background: linear-gradient(45deg, var(--gameover-gradient-start), var(--gameover-gradient-end));
+    color: white;
+    font-size: clamp(1.3rem, 4vw, 1.8rem);
+    font-weight: 700;
+    border-radius: 8px;
+    text-align: center;
+    transform: translateY(0);
+    animation: bounce 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Smoother bounce */
+    box-shadow: 0 10px 20px rgba(255, 75, 43, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    z-index: 20; /* Ensure it's above other elements if needed */
+}
+
+@keyframes bounce {
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.1); opacity: 1; }
+    80% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+}
+
+
+.game-over-message::after {
+    content: "Press 'R' to restart";
+    display: block;
+    font-size: clamp(0.8rem, 2.5vw, 1rem);
+    font-weight: normal;
+    margin-top: 10px;
+    text-transform: none;
+    opacity: 0.8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    h1 { letter-spacing: 2px; }
+    .score-container { padding: 0.6rem 1.5rem; }
+    .game-over-message { padding: 1rem 2rem; }
+}
+
+/* Game container enhancements */
+.game-container {
+    position: relative; /* Needed for absolute positioning children like pause overlay */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    backdrop-filter: blur(8px); /* Slightly reduce blur */
+    max-width: 95%; /* Max width relative to viewport */
+    width: fit-content; /* Adjust width to content */
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* Add subtle shadow */
+    border: 1px solid rgba(255, 255, 255, 0.18); /* Subtle border */
+}
+
+/* Game controls info */
+.controls-info {
+    margin-top: 1.5rem;
+    padding: 0.8rem 1.5rem;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #eee; /* Slightly lighter for contrast */
+    text-align: center;
+    line-height: 1.5;
+    max-width: 90%; /* Ensure it fits within container */
+}
+
+.controls-info span {
+    display: inline-block;
+    padding: 2px 8px;
+    margin: 2px 3px; /* Add vertical margin */
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    font-weight: bold;
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border for keys */
+}
+
+/* Start button */
+.start-button {
+    margin-top: 15px;
+    padding: 12px 30px; /* Slightly more padding */
+    background: linear-gradient(90deg, var(--button-gradient-start), var(--button-gradient-end));
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.start-button:hover, .start-button:focus-visible {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+    filter: brightness(1.1); /* Slightly brighten */
+    outline: none;
+}
+
+.start-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    filter: brightness(0.95); /* Slightly darken */
+}
+
+/* Difficulty selector */
+.difficulty-selector {
+    margin: 15px 0;
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    justify-content: center; /* Center buttons */
+    gap: 10px;
+}
+
+.difficulty-btn {
+    padding: 8px 18px; /* Slightly more padding */
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid transparent;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500; /* Slightly less bold */
+}
+
+.difficulty-btn:hover, .difficulty-btn:focus-visible {
+    background-color: rgba(255, 255, 255, 0.35);
+    transform: translateY(-2px); /* Subtle lift */
+    outline: none;
+}
+
+.difficulty-btn.active {
+    border-color: var(--highlight-color); /* Use highlight color */
+    background-color: rgba(255, 204, 0, 0.3); /* Match highlight color */
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.3); /* Subtle glow */
+}
+
+.difficulty-btn:active {
+    transform: translateY(0px); /* Reset lift on click */
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+
+/* Footer */
+footer {
+    margin-top: 2rem;
+    padding-bottom: 1rem; /* Ensure space at bottom */
+    text-align: center;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* High scores section */
+.high-scores {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 15px 20px;
+    border-radius: 10px;
+    color: white;
+    min-width: 180px; /* Slightly wider */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    display: none; /* Controlled by JS */
+    z-index: 5; /* Above background, below modals */
+    max-height: 300px; /* Limit height */
+    overflow-y: auto; /* Add scroll if needed */
+}
+
+.high-scores h3 {
+    margin-top: 0;
+    margin-bottom: 10px; /* Added margin */
+    text-align: center;
+    font-size: 1.2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 8px;
+    color: var(--highlight-color); /* Highlight title */
+}
+
+.high-scores ol {
+    padding-left: 20px; /* Adjust padding */
+    margin-bottom: 0;
+    list-style: decimal; /* Ensure numbers show */
+}
+
+.high-scores li {
+    margin-bottom: 8px; /* Increased spacing */
+    font-size: 0.95rem; /* Slightly larger font */
+    display: flex;
+    justify-content: space-between; /* Space out name/score if structured */
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.15); /* Subtle separator */
+    padding-bottom: 4px;
+}
+.high-scores li:last-child {
+    border-bottom: none; /* Remove border for last item */
+}
+
+/* Mobile optimizations */
+@media (max-width: 600px) {
+    .game-container {
+        padding: 10px;
+        width: 95%; /* Use more width */
+        max-width: none;
+        backdrop-filter: blur(5px); /* Less blur on mobile */
+    }
+
+    #gameCanvas {
+        width: 85vw; /* Relative width */
+        height: 85vw; /* Maintain square */
+        max-width: 400px; /* Limit max size */
+        max-height: 400px; /* Limit max size */
+    }
+
+    .high-scores {
+        position: static; /* Change from absolute */
+        top: auto;
+        right: auto;
+        margin-top: 20px;
+        width: 90%; /* Relative width */
+        max-width: 300px; /* Limit width */
+        /* display: block; */ /* Remove display:none override if needed on mobile */
+        order: 5; /* Place it later in flex order if body is flex */
+    }
+
+    .sound-toggle, .level-indicator, .theme-switcher {
+        position: static; /* Position static on mobile */
+        margin-top: 10px;
+    }
+    .game-controls-mobile { /* Container for controls on mobile */
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
+
+/* Dark mode support (Example using prefers-color-scheme) */
+@media (prefers-color-scheme: dark) {
+    /* No dark mode variables defined in :root; add them if needed */
+    /* Body rules removed to avoid empty ruleset error */
+}
+
+/* Pause overlay */
+.pause-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--overlay-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    border-radius: 15px; /* Match container's border radius */
+}
+
+.pause-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.pause-overlay h2 {
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    margin-bottom: 20px;
+    color: white;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 0.8); /* Stronger cyan glow */
+    animation: slowGlow 3s infinite alternate;
+}
+
+@keyframes slowGlow {
+    from { text-shadow: 0 0 10px rgba(0, 255, 255, 0.6); }
+    to { text-shadow: 0 0 20px rgba(0, 255, 255, 0.9); }
+}
+
+.pause-overlay p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 30px;
+    font-size: clamp(0.9rem, 3vw, 1.1rem);
+}
+
+/* Add styles for buttons within the pause overlay */
+.pause-overlay .button-group {
+    display: flex;
+    gap: 15px;
+}
+
+.pause-overlay .pause-button {
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 600;
+}
+.pause-overlay .pause-button:hover, .pause-overlay .pause-button:focus-visible {
+    background: rgba(255, 255, 255, 0.35);
+    transform: scale(1.05);
+    outline: none;
+}
+
+
+/* Game stats */
+.game-stats {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping */
+    justify-content: center; /* Center items */
+    gap: 15px; /* Reduced gap */
+    margin-top: 15px;
+    width: 100%; /* Take full width */
+}
+
+.stat-box {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-align: center;
+    min-width: 90px; /* Increased min-width */
+    flex-grow: 1; /* Allow boxes to grow */
+    flex-basis: 100px; /* Base width before growing */
+    transition: background-color 0.2s ease;
+}
+.stat-box:hover {
+    background-color: rgba(255, 255, 255, 0.18); /* Slightly lighter on hover */
+}
+
+.stat-box .value {
+    font-size: clamp(1.2rem, 4vw, 1.5rem);
+    font-weight: bold;
+    color: var(--highlight-color); /* Use highlight color */
+    display: block; /* Ensure label is below */
+    margin-bottom: 2px; /* Space between value and label */
+}
+
+.stat-box .label {
+    font-size: 0.75rem; /* Slightly smaller */
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px; /* Add subtle letter spacing */
+}
+
+/* Sound toggle */
+.sound-toggle {
+    /* Consider placing inside .game-container or near controls */
+    /* Position absolute might overlap on some layouts */
+    margin-top: 15px; /* Example if placed statically */
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    width: 45px; /* Slightly larger */
+    height: 45px; /* Slightly larger */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: white;
+    font-size: 1.4rem; /* Larger icon */
+    position: relative; /* Needed for the ::after pseudo-element */
+}
+
+.sound-toggle:hover, .sound-toggle:focus-visible {
+    background-color: rgba(255, 255, 255, 0.35);
+    transform: scale(1.1);
+    outline: none;
+}
+
+.sound-toggle.muted::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px; /* Line thickness */
+    height: 28px; /* Line length */
+    background-color: #ff4b2b; /* Use a red color */
+    transform: translate(-50%, -50%) rotate(45deg); /* Center and rotate */
+    border-radius: 1px;
+    pointer-events: none; /* Don't interfere with clicks */
+}
+
+/* Snake food animation (applied via JS) */
+@keyframes foodPulse {
+    0% { transform: scale(1); box-shadow: 0 0 5px rgba(255, 0, 0, 0.5); }
+    50% { transform: scale(1.2); box-shadow: 0 0 15px rgba(255, 0, 0, 0.8); }
+    100% { transform: scale(1); box-shadow: 0 0 5px rgba(255, 0, 0, 0.5); }
+}
+
+.food-animation {
+    /* This class would be added to the food element (likely a rect in canvas)
+       by JS. Direct CSS animation on canvas elements isn't standard.
+       This keyframe is useful if you render food as a separate HTML element,
+       or as a concept for the JS drawing logic (e.g., vary size/glow). */
+    animation: foodPulse 1s infinite ease-in-out;
+}
+
+/* Level indicator */
+.level-indicator {
+    /* Consider placing inside .game-container or near score */
+    margin-top: 15px; /* Example if placed statically */
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 8px 18px; /* More padding */
+    border-radius: 20px;
+    font-size: 1rem; /* Slightly larger */
+    font-weight: bold;
+    color: var(--highlight-color);
+    text-shadow: 0 0 8px rgba(255, 204, 0, 0.6); /* Enhanced glow */
+    border: 1px solid rgba(255, 204, 0, 0.5); /* Add subtle border */
+}
+
+/* Theme switcher */
+.theme-switcher {
+    /* Consider placing inside .game-container or footer */
+    margin-top: 15px; /* Example if placed statically */
+    display: flex;
+    gap: 8px; /* Increased gap */
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+}
+
+.theme-option {
+    width: 30px; /* Larger buttons */
+    height: 30px; /* Larger buttons */
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent; /* Thicker border for active state */
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Add shadow to buttons */
+}
+
+.theme-option:hover {
+    transform: scale(1.15); /* Increased hover scale */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+.theme-option:focus-visible {
+     outline: 2px solid var(--highlight-color);
+     outline-offset: 2px;
+}
+
+
+.theme-option.active {
+    border-color: white;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.7); /* Stronger glow */
+    transform: scale(1.1); /* Scale when active */
+}
+
+/* Define theme background styles directly */
+.theme-default { background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d); }
+.theme-blue { background: linear-gradient(135deg, #1a2a6c, #2a4858, #3a7bd5); }
+.theme-red { background: linear-gradient(135deg, #6a0000, #9a1717, #4d0a0a); }
+.theme-green { background: linear-gradient(135deg, #134e5e, #0f3443, #71b280); }
+.theme-purple { background: linear-gradient(135deg, #4a00e0, #8e2de2, #300d4d); }
+.theme-sunset { background: linear-gradient(135deg, #ff7e5f, #feb47b, #ff5e62); }
+
+/* Loading spinner */
+.loading-spinner {
+    width: 60px; /* Larger */
+    height: 60px; /* Larger */
+    border: 6px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff; /* White spinner part */
+    border-left-color: #fff; /* Make it look faster */
+    animation: spin 0.8s linear infinite; /* Faster spin */
+    position: absolute; /* Position relative to nearest positioned ancestor */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center using transform */
+    z-index: 100; /* Ensure it's on top */
+    display: none; /* Controlled by JS */
+}
+
+@keyframes spin {
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+
+/* Custom scrollbar (optional, browser support varies) */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1); /* Slightly lighter track */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.4); /* Brighter thumb */
+    border-radius: 10px;
+    border: 2px solid transparent; /* Add border to prevent overlap */
+    background-clip: content-box; /* Clip background to content area */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.6);
+}
+
+/* Style for body when a theme is active (JS would add this class) */
+body.theme-blue { background: linear-gradient(135deg, #1a2a6c, #2a4858, #3a7bd5); }
+body.theme-red { background: linear-gradient(135deg, #6a0000, #9a1717, #4d0a0a); }
+body.theme-green { background: linear-gradient(135deg, #134e5e, #0f3443, #71b280); }
+/* Add other theme body classes */

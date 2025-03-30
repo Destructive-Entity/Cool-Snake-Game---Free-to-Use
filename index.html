@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Snake Game</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Add Poppins font if not already linked -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="theme-default"> <!-- Start with a default theme class -->
+
+    <h1>Snake Game</h1>
+
+    <!-- Game Container might wrap canvas and controls -->
+    <div class="game-container">
+
+        <!-- Score and Level Display -->
+        <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 15px;">
+             <div class="score-container">Score: <span id="score">0</span></div>
+             <div class="level-indicator">Level: <span id="level">1</span></div>
+        </div>
+
+        <!-- Canvas and Overlays -->
+        <div style="position: relative;"> <!-- Relative position for overlays -->
+            <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+            <!-- Start Screen Overlay -->
+            <div id="startScreen" class="pause-overlay active" style="border-radius: 12px;"> <!-- Reuse pause style, initially active -->
+                 <h2>Ready to Play?</h2>
+                 <div class="difficulty-selector">
+                     <button class="difficulty-btn active" data-speed="150">Easy</button>
+                     <button class="difficulty-btn" data-speed="100">Medium</button>
+                     <button class="difficulty-btn" data-speed="60">Hard</button>
+                 </div>
+                 <button id="startButton" class="start-button">Start Game</button>
+            </div>
+
+            <!-- Pause Screen Overlay -->
+            <div id="pauseScreen" class="pause-overlay" style="border-radius: 12px;"> <!-- Initially hidden -->
+                 <h2>Paused</h2>
+                 <p>Press 'P' to Resume</p>
+            </div>
+
+             <!-- Game Over Message (Moved inside relative container if preferred) -->
+             <div id="gameOver" class="game-over-message" style="display: none; position: absolute; top: 35%; left: 50%; transform: translateX(-50%); z-index: 15;">
+                 <!-- Content will be filled by JS -->
+             </div>
+        </div>
+
+
+        <!-- Controls Info -->
+         <div class="controls-info">
+            Use <span>Arrow Keys</span> or <span>W</span><span>A</span><span>S</span><span>D</span> to move. Press <span>P</span> to Pause. Press <span>R</span> to Restart (Game Over).
+        </div>
+
+         <!-- Sound Toggle -->
+         <button id="soundToggle" class="sound-toggle" title="Toggle Sound">🔊</button> <!-- Emoji might vary -->
+
+    </div> <!-- End of game-container -->
+
+
+    <!-- High Scores (Example Placement) -->
+    <div id="highScoresDisplay" class="high-scores">
+        <h3>High Score</h3>
+        <ol>
+            <li><span id="highScoreValue">0</span></li>
+            <!-- Could add more scores later -->
+        </ol>
+    </div>
+
+    <!-- Theme Switcher (Example Placement) -->
+    <div class="theme-switcher">
+        <button class="theme-option theme-default active" data-theme="theme-default" title="Default Theme"></button>
+        <button class="theme-option theme-blue" data-theme="theme-blue" title="Blue Theme"></button>
+        <button class="theme-option theme-green" data-theme="theme-green" title="Green Theme"></button>
+        <button class="theme-option theme-red" data-theme="theme-red" title="Red Theme"></button>
+        <!-- Add more theme buttons as needed -->
+    </div>
+
+    <footer>
+        Enhanced Snake Game Demo Made By | https://github.com/Destructive-Entity
+    </footer>
+
+
+    <!-- Defer script loading until HTML is parsed -->
+    <script src="game.js" defer></script>
+
+</body>
+</html>
