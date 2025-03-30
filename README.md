@@ -2,9 +2,6 @@
 
 🎮 **[Click Here to Play the Live Demo!](https://destructive-entity.github.io/Cool-Snake-Game---Free-to-Use/)** 🎮
 
-Description:
-A modern and significantly enhanced implementation...
-
 **Description:**
 
 A modern and significantly enhanced implementation of the classic Snake game, built purely with web technologies (HTML Canvas, CSS, and JavaScript). This project goes beyond the basics, incorporating a sleek user interface and several engaging features:
